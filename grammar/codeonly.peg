@@ -1,0 +1,9 @@
+
+// This grammar treats everything as 'code'.
+parser
+    / a:(.*) { return {
+        action: "code",
+        payload: {
+            code: a.join("")
+        }
+    }};

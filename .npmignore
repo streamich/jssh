@@ -1,0 +1,6 @@
+*.ts
+/typings
+tsd.json
+node_modules/
+.modules/
+.idea/

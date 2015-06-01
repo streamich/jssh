@@ -1,0 +1,105 @@
+/*
+http://pegjs.org/online
+
+Tests:
+~ fs.readFile("myfiles.js");
+ls -la ..
+cd /hello/world
+!#/bin/env node index.js
+
+Returns:
+// ~ fs.readFile("myfiles.js");
+{
+    action: "stream",
+    payload: {
+        code: "fs.readFile("myfiles.js");"
+    }
+}
+// ls -la ..
+{
+    action: "command",
+    payload: {
+        command: "ls",
+        arguments: [
+            "-la",
+            ".."
+        ]
+    }
+}
+// !#/bin/env node index.js
+{
+    action: "exec",
+    payload: {
+        path: "/bin/env",
+        arguments: [
+            "node",
+            "index.js"
+        ]
+    }
+}
+
+*/
+
+parser
+    = "~" whitespace+ c:code { return {
+        action: "stream",
+        payload: {
+            code: c
+        }
+    };}
+    / whitespace* ExecStart whitespace* cmd:command whitespace* args:arguments? { return {
+        action: "exec",
+        payload: {
+            command: cmd,
+            arguments: args
+        }
+    };}
+    / whitespace* ExecCodeStart whitespace* code:(.*) { return {
+        action: "exec_code",
+        payload: {
+            code: code.join("")
+        }
+    };}
+//    / c:command whitespace+ a:arguments { return {
+//        action: "command",
+//        payload: {
+//            command: c,
+//            arguments: a
+//        }
+//    };}
+    / a:(.*) { return {
+        action: "code",
+        payload: {
+            code: a.join("")
+        }
+    }};
+
+// Execute a shell command.
+ExecStart
+    = ">"
+    / "//>"
+    / "#>"
+    / "#!"
+
+// Firest evaluate JS code, then execute a shell command.
+ExecCodeStart
+    = "$>"
+    / "//$>"
+    / "#$>"
+    / "#$!"
+    
+command = word
+
+arguments = w:(spaced_word)*
+
+spaced_word = sw:(word space*) { return sw[0]; }
+
+word = l:letter+ { return l.join(""); }
+
+letter = [^ ] // All non-space characters.
+
+space = " "
+
+code = c:(.*) { return c.join(""); }
+
+whitespace = [ \t\n]
