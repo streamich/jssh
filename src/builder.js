@@ -73,21 +73,16 @@ var Builder = (function () {
             callback(null, myshell);
         });
     };
-    Builder.buildRepl = function (opts, callback) {
+    Builder.buildRepl = function (shell, opts) {
         var myreader = new prompt.Prompt(opts.prompt);
         var myrepl = new Repl(myreader);
         var myhistory = new History(opts.history);
         opts.sandbox = {
-            jssh: myrepl,
-            hist: myhistory,
-            history: myhistory
+            sh: myrepl,
+            hist: myhistory
         };
-        Builder.buildShell(opts, function (err, shell) {
-            if (err)
-                return callback(err);
-            myrepl.setShell(shell).setHistory(myhistory).setConsole(shell.console);
-            callback(null, myrepl);
-        });
+        myrepl.setShell(shell).setHistory(myhistory).setConsole(shell.console);
+        return myrepl;
     };
     return Builder;
 })();

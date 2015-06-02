@@ -6,7 +6,6 @@ var __extends = this.__extends || function (d, b) {
 };
 /// <reference path="./typing.d.ts" />
 var events = require("events");
-var clc = require("cli-color");
 var Shell = (function (_super) {
     __extends(Shell, _super);
     function Shell() {

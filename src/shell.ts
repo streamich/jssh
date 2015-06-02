@@ -8,7 +8,6 @@ import Parser = require("./Parser");
 import context = require("./context/context");
 import Console = require("./Console");
 import History = require("./History");
-var clc = require("cli-color");
 
 
 export interface IShellOptions {

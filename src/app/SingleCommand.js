@@ -1,23 +1,17 @@
-var builder = require("../builder");
 var AppSingleCommand = (function () {
-    function AppSingleCommand() {
+    function AppSingleCommand(sh) {
+        this.sh = sh;
     }
-    AppSingleCommand.prototype.run = function (command, opts) {
-        builder.Builder.buildShell(opts, function (err, shell) {
+    AppSingleCommand.prototype.run = function (command, opts, cb) {
+        this.sh.eval(command, function (err, out, print) {
             if (err) {
-                console.log("Error on startup.");
+                console.log("Error when executing.");
                 console.log(err);
                 return;
             }
-            shell.eval(command, function (err, out, print) {
-                if (err) {
-                    console.log("Error when executing.");
-                    console.log(err);
-                    return;
-                }
-                if (print)
-                    console.log(out);
-            });
+            if (print)
+                console.log(out);
+            cb();
         });
     };
     return AppSingleCommand;

@@ -1,16 +1,11 @@
 var builder = require("../builder");
 var AppRepl = (function () {
-    function AppRepl() {
+    function AppRepl(sh) {
+        this.sh = sh;
     }
     AppRepl.prototype.run = function (opts) {
-        builder.Builder.buildRepl(opts, function (err, repl) {
-            if (err) {
-                console.log("Error on startup.");
-                console.log(err);
-                return;
-            }
-            repl.start();
-        });
+        var repl = builder.Builder.buildRepl(this.sh, opts);
+        repl.start();
     };
     return AppRepl;
 })();

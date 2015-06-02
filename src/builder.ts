@@ -107,28 +107,23 @@ export class Builder {
         });
     }
 
-    static buildRepl(opts: IOpts, callback) {
+    static buildRepl(shell: shell.Shell, opts: IOpts) {
         var myreader = new prompt.Prompt(opts.prompt);
 
         var myrepl = new Repl(myreader);
         var myhistory = new History(opts.history);
 
         opts.sandbox = {
-            jssh: myrepl,
+            sh: myrepl,
             hist: myhistory,
-            history: myhistory,
         };
 
-        Builder.buildShell(opts, (err, shell: shell.Shell) => {
-            if(err) return callback(err);
+        myrepl
+            .setShell(shell)
+            .setHistory(myhistory)
+            .setConsole(shell.console);
 
-            myrepl
-                .setShell(shell)
-                .setHistory(myhistory)
-                .setConsole(shell.console);
-
-            callback(null, myrepl);
-        });
+        return myrepl;
     }
 
 }

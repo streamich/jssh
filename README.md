@@ -4,12 +4,17 @@ A shell in *JavaScript*, use *JavaScript* instead of BASH.
 
 **This project is under development in very early alpha. Use at your own risk. Many parts of this project will change
 in the future.**
+
+## Installation
+
+Install as a global `npm` package.
+
+    npm install -g jssh
   
 ## Usage
 
-Install as a global package. And start the shell in REPL mode.
+To start the shell in REPL mode, just type `jssh` in your console.
 
-    npm install -g jssh
     jssh
     
 Execute arbitrary *JavaScript*.
@@ -27,13 +32,13 @@ it heavily uses [`shelljs`](http://npmjs.com/package/shelljs) package for Unix-l
     ls // Evaluates global functions automatically.
     
 To execute shell commands start with `>` symbol. This way your commands will be 'proxied' to the native system shell
-definded by the `--entrypoint` argument.
+definded by the `entrypoint` property in configuration file.
 
     > ls
     > whoami
     root
     
-Alternatively you can use `#!` or `//>` (instead of `>`) to execute a shell command. Advantage of using `//>` is that 
+Alternatively you can use `#!` or `//>` (instead of `>`) to execute a shell commands. Advantage of using `//>` is that 
 `//` starts a comment, which makes your command a valid *JavaScript* code. (Use `#!` for *CoffeScript*. Yes, you can
 use *CoffeeScript* or any language that compiles to *JavaScript*, read below.) 
 
@@ -47,6 +52,10 @@ shell. To execute your command interactively use `$` symbol like so: `$>`, `//$>
     
     var is_windows = !!process.env.WINDIR;
     $> is_windows ? "ipconfig" : "ifconfig";
+    
+Or simply use a predefined funcion provided by `jssh-api-jssh` API (see below on APIs).
+
+    $('pwd')
 
 Number directories with indices.
 
@@ -79,19 +88,130 @@ Save your command history to a file.
     
 Later you can re-run your commands by executing a file.
 
-    jssh -f test.sh.js
+    jssh --run test.sh.js
     
 To change your current working directory you can use `cd` function, for example to move one folder up do `cd('..')`.
 However, this syntax is a bit too cumbersome compared to the one we are used in native shells `cd ..`, fortunately in 
 `jssh` you can use any language that compiles to *JavaScript*, for example, *CoffeeScript* has a much easier syntax. 
 Use `--lang` argument to specify language you want to use, here is how to start a *CoffeeScript* shell:
 
-    jssh --lang coffee
-    cd '..'    
+    jssh --config '{"lang": "coffee"}'
+    cd '..'
     
-...    
+Execute a single command:
+
+    echo 'ls' | jssh
+    jssh -c 'ls'
     
-    ("#!/usr/bin/env jssh\n" + jssh.exportHistory().join("\n")).to("test.sh.js")
+
+## CLI Options
+
+...
+
+## Configuration
+
+At start `jssh` reads this [default config file](./config.coffee), which you can override in two ways.
+ 
+With `--config-file` CLI option you can tell `jssh` to read your `.json` config file, which will override the defaults.
+ 
+    jssh --config-file /etc/myconfig.json
+    
+Or you can use `--config` to pass serialized *JSON* object right in the console, like so:
+
+    jssh --config '{"prompt": " {{USER}} > ", "lang": "coffee"}'
+    
+Plese see the [default config file](./config.coffee) for available options with annotations. Some of them are:
+
+### `config.grammar`
+
+ - `grammar` -- When you type your command and press <kbd>ENTER</kbd> in the shell, `jssh` uses this grammar to
+ figure out which action to execute, see [Grammar](#Grammar) below.
+ 
+### `config.entrypoint`
+
+ - `entrypoint` -- The program to proxy to your `exec` actions, like `> ifconfig`.
+
+## Snippets
+
+`jssh` 'snippets' are *JavaScript* files that get executed in the context created by `jssh` shell, thus, they can
+take full advantage of commands provided by `jssh`.
+
+    jssh -f snippet.js
+    
+### Example: Install *Nginx* server on Ubuntu
+
+```coffeescript
+# Check if `nginx` is not already installed.
+if not which 'nginx'
+
+  # Install default Nginx server using APT.
+  $ 'apt-get update'
+  $ 'apt-get install -y nginx'
+
+  # Clean-up after APT.
+  $ 'apt-get clean'
+  rm '-rf', ['/var/lib/apt/lists/*', '/tmp/*', '/var/tmp/*']
+
+  $ 'service nginx start'
+  echo GET '127.0.0.1'
+```
+
+
+## API
+
+API of `jssh` are global functions that get exposed to the running context. APIs are basically `npm` packages whose
+methods get exposed as global functions, for example, that is how you can run different 'commands' in the console, like
+`ls()` or `cd()`, etc. 
+
+Run `jssh` with functions provided by `shelljs` package:
+
+    jssh --config '{"api":[[null, "shelljs"]]}'
+    
+Use `jssh-api-jssh-bin` instead provides `id`, `chown` commands.
+    
+    jssh --config '{"api":[[null, "jssh-api-jssh-bin"]]}'
+
+## Grammar
+
+`jssh` does not have a predefined command language, but rather it just executes *actions*. The grammar tells `jssh`
+which action to execute.
+
+Grammar in defined in [PEG.js](http://pegjs.org/) syntax; the default one is stored in 
+[./grammar/default.peg](./grammar/default.peg) file. You can provide your own one by overwriting the `grammar` property
+in the config.
+
+Currently, `jssh` knows how to execute these three actions: `code`, `exec`, `exec_code`.
+
+ - `code` -- This action evaluates the *JavaScript* code, like when you type `ls()`, *jssh* evaluates the global `ls`
+ function running in that context. If shell is running in different language, say *CoffeeScript*, it first compiles it
+ to *JavaScript*.
+ - `exec` -- This action proxies the command to the `entrypoint` defined in the config. This action runs when you type
+ in console, for example, `> ifconfig`.
+ - `exec_code` -- This action is same as `exec`, but first it evaluates the code like in `code` action and then proxies
+ the resulting `string` to the `entrypoint`, for example, `$> "p" + "w" + "d"`.
+
+The actions that *jssh* receives from *PEG.js* are in the following format: 
+
+    > npm install jssh --no-bin-links
+    {
+        action: "exec",
+        payload: {
+            command: "npm",
+            arguments: ["install", "jssh", "--no-bin-links"]
+        }
+    }
+    
+    console.log('Hello world');
+    {
+        action: "code",
+        payload: {
+            code: "console.log('Hello world');"
+        }
+    }
+    
+*P.S.* It, actually, has another command, `stream`, reserved with tilde syntax: `~ fs.createReadStream('file.txt')`. It
+is not implemented yet, but it will probably do something interesting with streams. Any suggestions welcome!
+    
 
 ## Options
 
@@ -169,8 +289,8 @@ Let's say we want a prompt that displays our username in
 
 Create your own colorful prompt.
 
-    var clc = require("cli-color");
-    var prompt = clc.green("jssh") + " @ " + clc.yellow("{{CWD}} > ");
+    var chalk = require("chalk");
+    var prompt = chalk.green("jssh") + " @ " + chalk.yellow("{{CWD}} > ");
     var str = JSON.stringify(prompt);
     console.log(str); // "\u001b[32mjssh\u001b[39m @ \u001b[33m{{CWD}} > \u001b[39m"
         
@@ -179,6 +299,8 @@ Use your colorful prompt:
     jssh --prompt '"\u001b[32mjssh\u001b[39m @ \u001b[33m{{CWD}} > \u001b[39m"'
     
 ### Simulate a Makefile
+
+*TODO:*
 
 Export a global `make` variable, which is an empty object. Allow to run command from command line after the file is
 executed, to run a specific make command.

@@ -4,13 +4,9 @@ import Repl = require("../Repl");
 import path = require("path");
 import readline = require("readline");
 import LineBuffer = require("../LineBuffer");
-//var clc = require("cli-color");
 var chalk = require("chalk");
 var manifest = require("../manifest");
 var _ = require("lodash");
-
-//var inquirer = require("inquirer");
-
 
 
 export class Template {

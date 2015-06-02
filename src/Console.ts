@@ -1,6 +1,5 @@
 /// <reference path="./typing.d.ts" />
 import util = require('util');
-var clc = require("cli-color");
 
 
 interface IConsole {

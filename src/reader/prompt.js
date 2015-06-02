@@ -8,11 +8,9 @@ var __extends = this.__extends || function (d, b) {
 var Reader = require("./Reader");
 var path = require("path");
 var readline = require("readline");
-//var clc = require("cli-color");
 var chalk = require("chalk");
 var manifest = require("../manifest");
 var _ = require("lodash");
-//var inquirer = require("inquirer");
 var Template = (function () {
     function Template(tpl) {
         /**

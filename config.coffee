@@ -31,6 +31,7 @@ module.exports =
   # If package is missing, it is automatically downloaded from `npm`.
   api: [
     [null,    'jssh-api-jssh']
+#    [null,    'jssh-api-jssh-bin'] # If you want to compile.
 #    [null,    'jssh-api-jssh-native']
     ['util',  'jssh-api-util']
     ['conf',  'jssh-api-conf']
@@ -40,7 +41,7 @@ module.exports =
   #
   #   require(<package>) -> global[<namespace>]
   require: [
-    ['_',     'lodash'] # `lodash` is used by `jssh` itself anyways, so might as well expose it to users.
+    ['_',     'lodash']
   ],
 
   # Whether to show verbose output.
@@ -53,4 +54,4 @@ module.exports =
   undef: false
 
   # Number of commands to save in history.
-  history: 100
+  history: 100 # Currently not supported :), `jssh` saves everyting.

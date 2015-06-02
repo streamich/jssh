@@ -1,5 +1,5 @@
 /// <reference path="./typing.d.ts" />
-var clc = require("cli-color");
+var chalk = require("chalk");
 
 
 export class Api {
@@ -79,7 +79,7 @@ export class Api {
         } catch(e) {
             if(e.code == "MODULE_NOT_FOUND") {
 
-                var pkg_name = clc.cyan("`" + pkg + "`");
+                var pkg_name = chalk.cyan("`" + pkg + "`");
                 //console.log("Package " + pkg_name + " not found. Trying to install it...");
 
                 require("./Npm").install(pkg, (err, data) => {

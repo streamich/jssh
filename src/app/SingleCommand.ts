@@ -1,4 +1,5 @@
 import builder = require("../builder");
+import shell = require("../shell");
 
 
 /**
@@ -6,21 +7,21 @@ import builder = require("../builder");
  */
 export = AppSingleCommand; class AppSingleCommand {
 
-    run(command: string, opts: builder.IOpts) {
-        builder.Builder.buildShell(opts, (err, shell) => {
+    sh: shell.Shell;
+
+    constructor(sh: shell.Shell) {
+        this.sh = sh;
+    }
+
+    run(command: string, opts: builder.IOpts, cb) {
+        this.sh.eval(command, (err, out, print) => {
             if(err) {
-                console.log("Error on startup.");
+                console.log("Error when executing.");
                 console.log(err);
                 return;
             }
-            shell.eval(command, (err, out, print) => {
-                if(err) {
-                    console.log("Error when executing.");
-                    console.log(err);
-                    return;
-                }
-                if(print) console.log(out);
-            });
+            if(print) console.log(out);
+            cb();
         });
     }
 

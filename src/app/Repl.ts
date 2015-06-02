@@ -1,17 +1,18 @@
 import builder = require("../builder");
+import shell = require("../shell");
 
 
 export = AppRepl; class AppRepl {
 
+    sh: shell.Shell;
+
+    constructor(sh: shell.Shell) {
+        this.sh = sh;
+    }
+
     run(opts: builder.IOpts) {
-        builder.Builder.buildRepl(opts, (err, repl) => {
-            if(err) {
-                console.log("Error on startup.");
-                console.log(err);
-                return;
-            }
-            repl.start();
-        });
+        var repl = builder.Builder.buildRepl(this.sh, opts);
+        repl.start();
     }
 
 }

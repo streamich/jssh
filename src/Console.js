@@ -1,6 +1,5 @@
 /// <reference path="./typing.d.ts" />
 var util = require('util');
-var clc = require("cli-color");
 var Console = (function () {
     function Console() {
         this.printUndefined = false;
