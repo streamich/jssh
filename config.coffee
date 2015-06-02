@@ -1,4 +1,6 @@
 
+is_win = /^win/.test process.platform
+
 module.exports =
 
   # Prompt string, such as ' > '. You can also use color codes for your prompt. Example: `"\u001b[31m > \u001b[39m"`.
@@ -14,7 +16,7 @@ module.exports =
   grammar: 'default.peg'
 
   # Similar to `ENTRYPOINT` command in `Dockerfile`.
-  entrypoint: '/bin/sh -c'
+  entrypoint: if is_win then null else ['/bin/sh', '-c']
 
   # Language in from which `code` commands will be compiled to JavaScript.
   lang: 'js'

@@ -8,23 +8,51 @@ var chalk = require("chalk");
 var manifest = require("../manifest");
 var _ = require("lodash");
 
+declare var ls: any;
+
+
+var colors = ['cyan', 'green', 'red', 'yellow', 'magenta'];
+var color1 = colors[Math.floor(Math.random() * colors.length)];
+var color2 = colors[Math.floor(Math.random() * colors.length)];
+var color3 = colors[Math.floor(Math.random() * colors.length)];
+var color4 = colors[Math.floor(Math.random() * colors.length)];
+var color5 = colors[Math.floor(Math.random() * colors.length)];
+var color6 = colors[Math.floor(Math.random() * colors.length)];
 
 export class Template {
 
     static template = function(self: Template) {
         var tpl =
-            chalk.cyan.bold(manifest.name) +
+            chalk[color1].bold(manifest.name) +
             ":" +
-            chalk.green("{{USER}}") +
+            chalk[color2].bold("{{USER}}") +
             "@" +
-            chalk.red("{{HOSTNAME_SHORT}}") +
-            chalk.yellow("{{CWD_SHORT}}") +
+            chalk[color3].bold("{{HOSTNAME_SHORT}}") +
+            chalk[color4].bold("{{CWD_SHORT}}") +
             "." +
-            chalk.magenta("{{LANG_SHORT}}") +
+            chalk[color5].bold("{{LANG_SHORT}}") +
             "#" +
-            chalk.cyan("{{CNT}}") +
+            chalk[color6].bold("{{CNT}}") +
             ";" +
-            chalk.cyan.dim("{{HOURS}}{{MINUTES}}{{SECONDS}} ");
+            chalk[color1].dim("{{HOURS}}{{MINUTES}}{{SECONDS}} ");
+
+        // Favorite
+        //tpl = "\u250C " +
+        //    chalk.white.bold("#{{CNT}}") +
+        //    "" +
+        //    chalk.white.dim("[{{HOURS}}{{MINUTES}}:{{SECONDS}}]") +
+        //    "" +
+        //    chalk.cyan.bold(manifest.name) +
+        //    ":" +
+        //    chalk.red.bold("{{USER}}") +
+        //    "@" +
+        //    chalk.green.bold("{{HOSTNAME_SHORT}}") +
+        //    chalk.yellow.bold("{{CWD}}") +
+        //    " " +
+        //    chalk.magenta.bold("({{LANG}})") +
+        //    "\n\u2514 ";
+        //console.log(JSON.stringify(tpl));
+
         var prompt = self.interpolate(tpl);
         //console.log(JSON.stringify(prompt));
         return prompt;
@@ -283,6 +311,9 @@ export class Prompt extends Reader {
                 return [results, line];
             }
         });
+        rl.on('close', () => {
+            console.log(''); // Otherwise parent console is on the same line.
+        });
     }
 
     readLine() {
@@ -291,7 +322,11 @@ export class Prompt extends Reader {
 
         // Show different prompt, if we are receiving multi line command.
         var prompt = buffer.lineCount() ? this.templateMultiline.render() : this.template.render();
-        this.readline.question(prompt, buffer.consume.bind(buffer));
+        var self = this;
+        var rl = this.readline.question(prompt, function(line) {
+            self.readline.pause(); // This line allows us to launch another `jssh` instance from this one `> jssh`.
+            buffer.consume(line);
+        });
     }
 
     setTemplate(tpl: Template|any) {

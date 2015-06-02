@@ -11,7 +11,7 @@ import History = require("./History");
 
 
 export interface IShellOptions {
-
+    entrypoint: string[];           // Like ['/bin/sh', '-c']
 }
 
 

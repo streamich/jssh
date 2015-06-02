@@ -50,8 +50,6 @@ cli.parse({
 });
 
 
-
-
 cli.main(function(args, options) {
     //console.log(args, options);
     var file_arg_pos = 0; // Position of a file to include in arguments list.
@@ -119,6 +117,7 @@ cli.main(function(args, options) {
         language: config.lang,
         grammar: grammar,
         history: config.history,
+        entrypoint: config.entrypoint,
     };
 
     var file = '';

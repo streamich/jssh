@@ -93,7 +93,8 @@ cli.main(function (args, options) {
         printUndefined: config.undef,
         language: config.lang,
         grammar: grammar,
-        history: config.history
+        history: config.history,
+        entrypoint: config.entrypoint
     };
     var file = '';
     if (args.length > file_arg_pos)

@@ -1,4 +1,5 @@
 import action = require("./action");
+import ActionExec = require("./Exec");
 
 
 /**
@@ -27,38 +28,19 @@ export = ActionExecCode; class ActionExecCode extends action.Action {
 
         var out: any = shell.context.run(js_code);
         //console.log("Running", "" + out);
+        this.runString("" + out, cb);
+    }
 
-        var command = this.entrypoint[0];
-        var args = this.entrypoint.slice(1);
-        args.push("" + out);
-        var cmd = spawn(command, args, {
-            stdio: "inherit", // This line preserves console colors of the child process.
-        });
-
-        cmd.on("exit", (code) => {
-            cb(null, code);
-        });
-
-        //var result = [];
-        //cmd.stdout.on("data", function (data) {
-        //    result.push(data);
-        //    self.shell.console.write(data.toString());
-        //});
-        //
-        //var error = [];
-        //cmd.stderr.on("data", function (data) {
-        //    error.push(data);
-        //    self.shell.console.write(data.toString());
-        //});
-        //
-        //cmd.on("close", (code) => {
-        //    cb(error.length ? error.join("") : null, result.join(""));
-        //});
-        //cmd.on("error", (err) => {
-        //    cb(err);
-        //});
-
-        return out;
+    runString(str, cb) {
+        // TODO: Clean this code, this is not nice.
+        // TODO: Probably should have another loop through PEG.js
+        var args = str.split(" ");
+        var cmd = args.shift();
+        var payload = {
+            command: cmd,
+            arguments: args,
+        };
+        ActionExec.run(this.shell.opts.entrypoint, payload, cb);
     }
 
 }

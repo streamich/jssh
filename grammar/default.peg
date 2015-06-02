@@ -47,6 +47,10 @@ parser
             code: c
         }
     };}
+    / RebornCmd !RebornCmd { return {
+        action: "respawn",
+        payload: {}
+    };}
     / whitespace* ExecStart whitespace* cmd:command whitespace* args:arguments? { return {
         action: "exec",
         payload: {
@@ -73,6 +77,9 @@ parser
             code: a.join("")
         }
     }};
+
+RebornCmd
+    = "."
 
 // Execute a shell command.
 ExecStart

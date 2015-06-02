@@ -11,44 +11,37 @@ var ActionExec = (function (_super) {
         _super.apply(this, arguments);
         this.name = "exec";
         this.printOutput = false;
-        this.entrypoint = ["/bin/sh", "-c"];
     }
+    ActionExec.run = function (entrypoint, payload, cb) {
+        var child_process = require("child_process");
+        var spawn = child_process.spawn;
+        if (entrypoint) {
+            var command = entrypoint[0];
+            var args = entrypoint.slice(1);
+            args.push(payload.command + " " + payload.arguments.join(" "));
+            var cmd = spawn(command, args, {
+                stdio: "inherit"
+            });
+            cmd.on("error", cb);
+            cmd.on("exit", function (code) {
+                cb(null, code);
+            });
+        }
+        else {
+            var cmd = spawn(payload.command, payload.arguments, {
+                stdio: "inherit"
+            });
+            cmd.on("error", function (err) {
+                //console.log(err);
+                cb(err);
+            });
+            cmd.on("exit", function (code) {
+                cb(null, code);
+            });
+        }
+    };
     ActionExec.prototype.run = function (cb) {
-        //var exec = require("child_process").exec;
-        //var cmd = this.payload.command + " " + this.payload.arguments.join(" ");
-        //exec(cmd, cb);
-        var self = this;
-        var spawn = require("child_process").spawn;
-        var command = this.entrypoint[0];
-        var args = this.entrypoint.slice(1);
-        args.push(this.payload.command + " " + this.payload.arguments.join(" "));
-        var cmd = spawn(command, args, {
-            stdio: "inherit"
-        });
-        cmd.on("exit", function (code) {
-            cb(null, code);
-        });
-        //var result = [];
-        //cmd.stdout.on("data", function (data) {
-        //    result.push(data);
-        //    self.shell.console.write(data.toString());
-        //});
-        //
-        //var error = [];
-        //cmd.stderr.on("data", function (data) {
-        //    console.log('.\n\n\n\n..', 'finish\n\n\ed');
-        //    error.push(data);
-        //    self.shell.console.write(data.toString());
-        //});
-        //
-        //cmd.on("close", (code) => {
-        //    console.log('.\n\n\n\n..', 'finish\n\n\ed');
-        //    cb(error.length ? error.join("") : null, result.join(""));
-        //});
-        //cmd.on("error", (err) => {
-        //    console.log('..\n\n\n.', 'finish\n\n\n\nned errr');
-        //    cb(err);
-        //});
+        ActionExec.run(this.shell.opts.entrypoint, this.payload, cb);
     };
     return ActionExec;
 })(action.Action);

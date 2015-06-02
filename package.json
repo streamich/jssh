@@ -8,11 +8,10 @@
     "jssh": "bin/jssh"
   },
   "dependencies": {
-    "cli":                "0.6.6",
+    "cli":                "0.7.0",
     "chalk":              "1.0.0",
     "cli-spinner":        "0.2.1",
     "stripcolorcodes":    "0.1.0",
-    "npm":                "2.10.1",
     "async":              "1.0.0",
     "pegjs":              "0.8.0",
     "lodash":             "3.9.3",

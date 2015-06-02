@@ -11,6 +11,7 @@ var ActionCode = require("./action/Code");
 var ActionExec = require("./action/Exec");
 var ActionExecCode = require("./action/ExecCode");
 var ActionStream = require("./action/Stream");
+var ActionRespawn = require("./action/Respawn");
 var History = require("./History");
 var fs = require("fs");
 var _ = require("lodash");
@@ -58,18 +59,20 @@ var Builder = (function () {
             var myconsole = new Console;
             myconsole.isVerbose = opts.verbose;
             myconsole.printUndefined = opts.printUndefined;
-            var shell_opts = {};
+            var shell_opts = {
+                entrypoint: opts.entrypoint
+            };
             var myshell = new shell.Shell;
             var mycontext = new ContextMain;
             var mysandbox = _.extend({}, context.Context.sandbox, opts.sandbox || {}, {
-                shell: myshell
+                sh: myshell
             });
             mycontext.start(mysandbox);
             mycontext.exportMethodsAsGlobalVariables(mylib);
             opts.require.forEach(function (pkg) {
                 mycontext.requirePackage(pkg.namespace, pkg.name);
             });
-            myshell.setOptions(shell_opts).setLanguage(language).setParser(parser).setLib(mylib).setConsole(myconsole).setContext(mycontext).registerActionClass("code", ActionCode).registerActionClass("exec", ActionExec).registerActionClass("exec_code", ActionExecCode).registerActionClass("stream", ActionStream);
+            myshell.setOptions(shell_opts).setLanguage(language).setParser(parser).setLib(mylib).setConsole(myconsole).setContext(mycontext).registerActionClass("code", ActionCode).registerActionClass("exec", ActionExec).registerActionClass("exec_code", ActionExecCode).registerActionClass("stream", ActionStream).registerActionClass("respawn", ActionRespawn);
             callback(null, myshell);
         });
     };

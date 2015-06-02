@@ -11,6 +11,7 @@ import ActionCode = require("./action/Code");
 import ActionExec = require("./action/Exec");
 import ActionExecCode = require("./action/ExecCode");
 import ActionStream = require("./action/Stream");
+import ActionRespawn = require("./action/Respawn");
 import History = require("./History");
 import fs = require("fs");
 var _ = require("lodash");
@@ -33,6 +34,7 @@ export interface IOpts {
     grammar: string;                // Path to file with command line grammar.
     history: number;
     sandbox?: any;                  // Variables to add to sandbox when creating context.
+    entrypoint: string[];           // Like ['/bin/sh', '-c']
 }
 
 export class Builder {
@@ -78,12 +80,14 @@ export class Builder {
             myconsole.isVerbose = opts.verbose;
             myconsole.printUndefined = opts.printUndefined;
 
-            var shell_opts:shell.IShellOptions = {};
+            var shell_opts:shell.IShellOptions = {
+                entrypoint: opts.entrypoint,
+            };
             var myshell = new shell.Shell;
 
             var mycontext = new ContextMain;
             var mysandbox = _.extend({}, context.Context.sandbox, opts.sandbox || {}, {
-                shell: myshell,
+                sh: myshell,
             });
             mycontext.start(mysandbox);
             mycontext.exportMethodsAsGlobalVariables(mylib);
@@ -101,7 +105,8 @@ export class Builder {
                 .registerActionClass("code", ActionCode)
                 .registerActionClass("exec", ActionExec)
                 .registerActionClass("exec_code", ActionExecCode)
-                .registerActionClass("stream", ActionStream);
+                .registerActionClass("stream", ActionStream)
+                .registerActionClass("respawn", ActionRespawn);
 
             callback(null, myshell);
         });

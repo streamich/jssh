@@ -5,6 +5,7 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var action = require("./action");
+var ActionExec = require("./Exec");
 var ActionExecCode = (function (_super) {
     __extends(ActionExecCode, _super);
     function ActionExecCode() {
@@ -26,34 +27,18 @@ var ActionExecCode = (function (_super) {
         }
         var out = shell.context.run(js_code);
         //console.log("Running", "" + out);
-        var command = this.entrypoint[0];
-        var args = this.entrypoint.slice(1);
-        args.push("" + out);
-        var cmd = spawn(command, args, {
-            stdio: "inherit"
-        });
-        cmd.on("exit", function (code) {
-            cb(null, code);
-        });
-        //var result = [];
-        //cmd.stdout.on("data", function (data) {
-        //    result.push(data);
-        //    self.shell.console.write(data.toString());
-        //});
-        //
-        //var error = [];
-        //cmd.stderr.on("data", function (data) {
-        //    error.push(data);
-        //    self.shell.console.write(data.toString());
-        //});
-        //
-        //cmd.on("close", (code) => {
-        //    cb(error.length ? error.join("") : null, result.join(""));
-        //});
-        //cmd.on("error", (err) => {
-        //    cb(err);
-        //});
-        return out;
+        this.runString("" + out, cb);
+    };
+    ActionExecCode.prototype.runString = function (str, cb) {
+        // TODO: Clean this code, this is not nice.
+        // TODO: Probably should have another loop through PEG.js
+        var args = str.split(" ");
+        var cmd = args.shift();
+        var payload = {
+            command: cmd,
+            arguments: args
+        };
+        ActionExec.run(this.shell.opts.entrypoint, payload, cb);
     };
     return ActionExecCode;
 })(action.Action);
