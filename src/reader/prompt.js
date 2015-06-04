@@ -203,7 +203,6 @@ var Prompt = (function (_super) {
         _super.call(this);
         this.setTemplate(tpl);
         this.setMultilineTemplate(tpl_multiline);
-        this.init();
         // `readline` module does not parse out color info when setting prompt length, resulting in
         // extra spaces. Here we fix that.
         //var set_prompt = this.readline.setPrompt.bind(this.readline);
@@ -218,10 +217,15 @@ var Prompt = (function (_super) {
         this.buffer = buffer;
         return this;
     };
-    Prompt.prototype.init = function () {
+    Prompt.prototype.init = function (stdin, stdout, terminal) {
+        if (stdin === void 0) { stdin = process.stdin; }
+        if (stdout === void 0) { stdout = process.stdout; }
+        if (terminal === void 0) { terminal = true; }
+        stdin.isTTY = true;
+        stdout.isTTY = true;
         var rl = this.readline = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout,
+            input: stdin,
+            output: stdout,
             terminal: true,
             completer: function (line) {
                 var clean_line = line.replace(/([^a-z0-9_])/ig, ' ').trim();

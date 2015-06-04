@@ -4,8 +4,6 @@ var Console = (function () {
     function Console() {
         this.printUndefined = false;
         this.isVerbose = false;
-        this.stdout = process.stdout;
-        this.stderr = process.stderr;
         this.highlighter = function (msg) {
             return util.inspect(msg, {
                 //showHidden: true,
@@ -15,12 +13,12 @@ var Console = (function () {
         };
     }
     Console.prototype.write = function (msg) {
-        if (this.stdout)
-            this.stdout.write("" + msg);
+        if (this.sh.stdio.stdout)
+            this.sh.stdio.stdout.write("" + msg);
     };
     Console.prototype.writeError = function (msg) {
-        if (this.stderr)
-            this.stderr.write("" + msg);
+        if (this.sh.stdio.stderr)
+            this.sh.stdio.stderr.write("" + msg);
     };
     Console.prototype.logSimple = function (msg) {
         this.write(msg + "\n");
@@ -38,7 +36,12 @@ var Console = (function () {
         return this.highlighter ? this.highlighter(msg) : msg;
     };
     Console.prototype.logHighlighted = function (msg) {
-        this.logSimple(this.highlight(msg));
+        if (typeof msg == "string") {
+            this.logSimple(msg);
+        }
+        else {
+            this.logSimple(this.highlight(msg));
+        }
     };
     Console.prototype.logFormatted = function (msg) {
         if (msg instanceof Array) {

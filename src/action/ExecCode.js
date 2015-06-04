@@ -38,7 +38,7 @@ var ActionExecCode = (function (_super) {
             command: cmd,
             arguments: args
         };
-        ActionExec.run(this.shell.opts.entrypoint, payload, cb);
+        ActionExec.run(this.shell.opts.entrypoint, payload, this.shell, cb);
     };
     return ActionExecCode;
 })(action.Action);

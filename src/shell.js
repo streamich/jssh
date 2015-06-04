@@ -10,8 +10,13 @@ var Shell = (function (_super) {
     __extends(Shell, _super);
     function Shell() {
         _super.apply(this, arguments);
-        this.stdout = process.stdout;
-        this.stderr = process.stderr;
+        this.stdio = {
+            stdin: process.stdin,
+            stdout: process.stdout,
+            stderr: process.stderr
+        };
+        // Used in `ActionExec`, experimental.
+        this.shareStdio = true;
         /**
          * Actions that this shell is able to execute.
          * @type {{}}
@@ -34,8 +39,9 @@ var Shell = (function (_super) {
         this.lib = lib;
         return this;
     };
-    Shell.prototype.setConsole = function (console) {
+    Shell.prototype.bindConsole = function (console) {
         this.console = console;
+        console.sh = this;
         return this;
     };
     Shell.prototype.setContext = function (context) {
@@ -103,7 +109,13 @@ var Shell = (function (_super) {
      * @returns {string} Compiled JS code.
      */
     Shell.prototype.eval = function (command, cb) {
-        var ast = this.parser.parse(command); // Processed by peg.js, see "../grammar/default.peg" file.
+        try {
+            var ast = this.parser.parse(command); // Processed by peg.js, see "../grammar/default.peg" file.
+        }
+        catch (e) {
+            this.console.logError("Grammar parse error.");
+            this.console.logError(e);
+        }
         this.console.verbose("Evaluating", ast);
         var payload = ast.payload;
         payload._raw = command; // Store raw command string, for displaying in history.

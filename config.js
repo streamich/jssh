@@ -14,7 +14,16 @@
     verbose: false,
     debug: false,
     undef: false,
-    history: 100
+    history: 100,
+    pwd: null,
+    ssh: {
+      privateKey: 'server.key',
+      publicKey: 'client.pub',
+      users: {
+        admin: 'admin'
+      }
+    },
+    childArgs: ['--config', {}]
   };
 
 }).call(this);

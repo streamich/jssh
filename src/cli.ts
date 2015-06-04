@@ -26,27 +26,14 @@ if(process.argv.length > 2) {
 var cli = require("cli");
 
 
-
-
 cli.parse({
     "config-file":  ['',            'Configuration file',                       "string"],
     config:         ['',            'Configuration as JSON string',             "string"],
     code:           ["c",           "Code to evaluate",                         "string"],
-
-    //file:           ["f",           "Execute a file",                           "string"],
-    //snippet:        ["s",           "Execute a file",                           "string"],
-    //require:        ["r",           "require() a file",                         "string"],
-
-    //prompt:         ["p",           "Propmt to use, default is 'jssh > '",      "string"],
-    //api:            ["a",           "List of packages to use as global API",    "string",       "shelljs;util:jssh-api-util;conf:jssh-api-conf"],
-    //require:        ["r",           "List of packages to require",              "string",       "_:lodash"],
-    //grammar:        ["g",           "File with PEG grammar to use",             "string"],
-    //lang:           ["l",           "Language to use to compile code",          "string",       "js"],
-    //verbose:        ["v",           "Verbose mode",                             "boolean",      false],
-    //entrypoint:     ["",            "Similar to ENTRYPOIN in Docker",           "string",       "/bin/sh -c"],
-    //debug:          ["",            "Debug mode",                               "boolean",      false],
-    //undef:          ["",            "Print undefined",                          "boolean",      false],
-    //history:        ["",            "Length of command history",                "number",       100],
+    port:           ["p",           "TCP port or UNIX socket file",             "string"],
+    ssh:            ["",            "SSH host",                                 "string"],
+    client:         ["",            "Connect to a jssh server",                 "bool"],
+    stdio:          ["s",           "Communicate through STDIO",                "bool"],
 });
 
 
@@ -123,10 +110,37 @@ cli.main(function(args, options) {
     var file = '';
     if(args.length > file_arg_pos) file = args[file_arg_pos];
 
+    // Start an SSH server.
+    if(options.ssh) {
+        if(!options.port) throw Error('Port --port not specified.');
+        opts.ssh = options.ssh;
+        opts.port = options.port;
+        var SshServerApp = require("./app/SshServer");
+        var app = new SshServerApp(opts);
+        app.run();
+        return;
+    }
+
+    // Start --port server.
+    if(options.port) {
+        var SocketApp = require("./app/Socket");
+        var app = new SocketApp(opts);
+        app.run(options.port);
+        return;
+    }
+
     builder.Builder.buildShell(opts, (err, shell) => {
         if(err) {
             console.log("Error on startup.");
             console.log(err);
+            return;
+        }
+
+        // Start --headless server.
+        if(options.stdio) {
+            var HeadlessApp = require("./app/Headless");
+            var app = new HeadlessApp(shell);
+            app.run();
             return;
         }
 

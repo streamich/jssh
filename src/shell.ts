@@ -8,10 +8,18 @@ import Parser = require("./Parser");
 import context = require("./context/context");
 import Console = require("./Console");
 import History = require("./History");
+import Repl = require("./Repl");
 
 
 export interface IShellOptions {
     entrypoint: string[];           // Like ['/bin/sh', '-c']
+}
+
+
+export interface IStdIO {
+    stdin;
+    stdout;
+    stderr;
 }
 
 
@@ -30,8 +38,14 @@ export class Shell extends events.EventEmitter {
 
     context: context.Context;
 
-    stdout = process.stdout;
-    stderr = process.stderr;
+    stdio: IStdIO = {
+        stdin: process.stdin,
+        stdout: process.stdout,
+        stderr: process.stderr,
+    };
+
+    // Used in `ActionExec`, experimental.
+    shareStdio = true;
 
     console: Console;
 
@@ -40,6 +54,8 @@ export class Shell extends events.EventEmitter {
      * @type {{}}
      */
     actions: any = {};
+
+    repl: Repl;
 
     setOptions(opts: IShellOptions) {
         this.opts = opts;
@@ -61,8 +77,9 @@ export class Shell extends events.EventEmitter {
         return this;
     }
 
-    setConsole(console) {
+    bindConsole(console: Console) {
         this.console = console;
+        console.sh = this;
         return this;
     }
 
@@ -138,7 +155,12 @@ export class Shell extends events.EventEmitter {
      * @returns {string} Compiled JS code.
      */
     eval(command: string, cb: (err?: any, out?: any, print?: boolean) => void): any {
-        var ast = this.parser.parse(command); // Processed by peg.js, see "../grammar/default.peg" file.
+        try {
+            var ast = this.parser.parse(command); // Processed by peg.js, see "../grammar/default.peg" file.
+        } catch(e) {
+            this.console.logError("Grammar parse error.");
+            this.console.logError(e);
+        }
         this.console.verbose("Evaluating", ast);
 
         var payload = ast.payload;

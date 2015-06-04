@@ -1,5 +1,6 @@
 /// <reference path="./typing.d.ts" />
 import util = require('util');
+import shell = require('./shell');
 
 
 interface IConsole {
@@ -14,23 +15,22 @@ export = Console; class Console implements IConsole {
 
     isVerbose = false;
 
-    stdout: NodeJS.WritableStream = process.stdout;
-    stderr: NodeJS.WritableStream = process.stderr;
+    sh: shell.Shell;
 
     highlighter = function(msg) {
         return util.inspect(msg, {
             //showHidden: true,
             depth: 4,
-            colors: true
+            colors: true,
         });
     };
 
     write(msg) {
-        if(this.stdout) this.stdout.write("" + msg);
+        if(this.sh.stdio.stdout) this.sh.stdio.stdout.write("" + msg);
     }
 
     writeError(msg) {
-        if(this.stderr) this.stderr.write("" + msg);
+        if(this.sh.stdio.stderr) this.sh.stdio.stderr.write("" + msg);
     }
 
     logSimple(msg) {
@@ -54,7 +54,11 @@ export = Console; class Console implements IConsole {
     }
 
     logHighlighted(msg) {
-        this.logSimple(this.highlight(msg));
+        if(typeof msg == "string") {
+            this.logSimple(msg);
+        } else {
+            this.logSimple(this.highlight(msg));
+        }
     }
 
     logFormatted(msg) {

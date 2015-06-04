@@ -12,6 +12,21 @@ import History = require("./History");
  */
 export = Repl; class Repl extends events.EventEmitter {
 
+    static build(sh: shell.Shell, opts: any = {}, terminal = true) {
+        var myreader = new prompt.Prompt(opts.prompt || null);
+        myreader.init(sh.stdio.stdin, sh.stdio.stdout, terminal);
+
+        var myrepl = new Repl(myreader);
+        var myhistory = new History(opts.history);
+
+        myrepl
+            .setShell(sh)
+            .setHistory(myhistory);
+            //.setConsole(sh.console);
+
+        return myrepl;
+    }
+
     shell: shell.Shell;
 
     reader: prompt.Prompt;
@@ -46,9 +61,9 @@ export = Repl; class Repl extends events.EventEmitter {
         return this;
     }
 
-    setConsole(console: Console) {
-        this.console = console;
-    }
+    //setConsole(console: Console) {
+    //    this.console = console;
+    //}
 
     read(command: string) {
         if(command) this.eval(command.replace(/^\s+|\s+$/g, '')); // .replace() == .trim()
@@ -58,7 +73,7 @@ export = Repl; class Repl extends events.EventEmitter {
     eval(command: string) {
         var js = this.shell.eval(command, function(err, output, print = true) {
             if(print) {
-                this.console.logFormatted(output);
+                this.shell.console.logFormatted(output);
             }
             this.loop();
             this.emit("eval", command, js, output);
@@ -67,11 +82,11 @@ export = Repl; class Repl extends events.EventEmitter {
     }
 
     print(output: any) {
-        this.console.log(output);
+        this.shell.console.log(output);
     }
 
     printError(output: any) {
-        this.console.error(output);
+        this.shell.console.error(output);
     }
 
     loop() {
@@ -83,7 +98,7 @@ export = Repl; class Repl extends events.EventEmitter {
                 "{{BUFFERED_LINES}}":       0,
                 "{{BUFFERED_LINES_+1}}":    1,
             });
-            this.console.logSimple(multiline_prompt + this.lineBuffer.buffer[0] + this.lineBuffer.lastFoundSentinel);
+            this.shell.console.logSimple(multiline_prompt + this.lineBuffer.buffer[0] + this.lineBuffer.lastFoundSentinel);
         }
 
         this.reader.readLine();
@@ -114,7 +129,7 @@ export = Repl; class Repl extends events.EventEmitter {
             cmds.push(command);
         });
 
-        //this.console.log("Exporting history to '" + file + "'.");
+        //this.shell.console.log("Exporting history to '" + file + "'.");
         //fs.writeFile(file, cmds.join(""));
         return cmds;
     }

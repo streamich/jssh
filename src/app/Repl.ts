@@ -1,5 +1,6 @@
 import builder = require("../builder");
 import shell = require("../shell");
+import Repl = require("../Repl");
 
 
 export = AppRepl; class AppRepl {
@@ -11,7 +12,7 @@ export = AppRepl; class AppRepl {
     }
 
     run(opts: builder.IOpts) {
-        var repl = builder.Builder.buildRepl(this.sh, opts);
+        var repl = Repl.build(this.sh, opts);
         repl.start();
     }
 

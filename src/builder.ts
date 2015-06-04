@@ -35,6 +35,8 @@ export interface IOpts {
     history: number;
     sandbox?: any;                  // Variables to add to sandbox when creating context.
     entrypoint: string[];           // Like ['/bin/sh', '-c']
+    port?: string|number;
+    ssh?: string;
 }
 
 export class Builder {
@@ -72,18 +74,19 @@ export class Builder {
 
             var language = res[1];
 
+            var myshell = new shell.Shell;
+
             var peg = fs.readFileSync(opts.grammar).toString();
             var parser = new Parser();
             parser.compileGrammar(peg);
 
-            var myconsole = new Console;
-            myconsole.isVerbose = opts.verbose;
-            myconsole.printUndefined = opts.printUndefined;
-
             var shell_opts:shell.IShellOptions = {
                 entrypoint: opts.entrypoint,
             };
-            var myshell = new shell.Shell;
+
+            var myconsole = new Console;
+            myconsole.isVerbose = opts.verbose;
+            myconsole.printUndefined = opts.printUndefined;
 
             var mycontext = new ContextMain;
             var mysandbox = _.extend({}, context.Context.sandbox, opts.sandbox || {}, {
@@ -100,7 +103,7 @@ export class Builder {
                 .setLanguage(language)
                 .setParser(parser)
                 .setLib(mylib)
-                .setConsole(myconsole)
+                .bindConsole(myconsole)
                 .setContext(mycontext)
                 .registerActionClass("code", ActionCode)
                 .registerActionClass("exec", ActionExec)
@@ -110,25 +113,6 @@ export class Builder {
 
             callback(null, myshell);
         });
-    }
-
-    static buildRepl(shell: shell.Shell, opts: IOpts) {
-        var myreader = new prompt.Prompt(opts.prompt);
-
-        var myrepl = new Repl(myreader);
-        var myhistory = new History(opts.history);
-
-        opts.sandbox = {
-            sh: myrepl,
-            hist: myhistory,
-        };
-
-        myrepl
-            .setShell(shell)
-            .setHistory(myhistory)
-            .setConsole(shell.console);
-
-        return myrepl;
     }
 
 }

@@ -1,8 +1,6 @@
 var shell = require("./shell");
-var Repl = require("./Repl");
 var api = require("./api");
 var Console = require("./Console");
-var prompt = require("./reader/prompt");
 var Language = require("./Language");
 var Parser = require("./Parser");
 var context = require("./context/context");
@@ -12,7 +10,6 @@ var ActionExec = require("./action/Exec");
 var ActionExecCode = require("./action/ExecCode");
 var ActionStream = require("./action/Stream");
 var ActionRespawn = require("./action/Respawn");
-var History = require("./History");
 var fs = require("fs");
 var _ = require("lodash");
 var async = require("async");
@@ -53,16 +50,16 @@ var Builder = (function () {
             if (err)
                 return callback(err);
             var language = res[1];
+            var myshell = new shell.Shell;
             var peg = fs.readFileSync(opts.grammar).toString();
             var parser = new Parser();
             parser.compileGrammar(peg);
-            var myconsole = new Console;
-            myconsole.isVerbose = opts.verbose;
-            myconsole.printUndefined = opts.printUndefined;
             var shell_opts = {
                 entrypoint: opts.entrypoint
             };
-            var myshell = new shell.Shell;
+            var myconsole = new Console;
+            myconsole.isVerbose = opts.verbose;
+            myconsole.printUndefined = opts.printUndefined;
             var mycontext = new ContextMain;
             var mysandbox = _.extend({}, context.Context.sandbox, opts.sandbox || {}, {
                 sh: myshell
@@ -72,20 +69,9 @@ var Builder = (function () {
             opts.require.forEach(function (pkg) {
                 mycontext.requirePackage(pkg.namespace, pkg.name);
             });
-            myshell.setOptions(shell_opts).setLanguage(language).setParser(parser).setLib(mylib).setConsole(myconsole).setContext(mycontext).registerActionClass("code", ActionCode).registerActionClass("exec", ActionExec).registerActionClass("exec_code", ActionExecCode).registerActionClass("stream", ActionStream).registerActionClass("respawn", ActionRespawn);
+            myshell.setOptions(shell_opts).setLanguage(language).setParser(parser).setLib(mylib).bindConsole(myconsole).setContext(mycontext).registerActionClass("code", ActionCode).registerActionClass("exec", ActionExec).registerActionClass("exec_code", ActionExecCode).registerActionClass("stream", ActionStream).registerActionClass("respawn", ActionRespawn);
             callback(null, myshell);
         });
-    };
-    Builder.buildRepl = function (shell, opts) {
-        var myreader = new prompt.Prompt(opts.prompt);
-        var myrepl = new Repl(myreader);
-        var myhistory = new History(opts.history);
-        opts.sandbox = {
-            sh: myrepl,
-            hist: myhistory
-        };
-        myrepl.setShell(shell).setHistory(myhistory).setConsole(shell.console);
-        return myrepl;
     };
     return Builder;
 })();

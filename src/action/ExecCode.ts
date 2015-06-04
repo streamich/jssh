@@ -40,7 +40,7 @@ export = ActionExecCode; class ActionExecCode extends action.Action {
             command: cmd,
             arguments: args,
         };
-        ActionExec.run(this.shell.opts.entrypoint, payload, cb);
+        ActionExec.run(this.shell.opts.entrypoint, payload, this.shell, cb);
     }
 
 }

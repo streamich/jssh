@@ -26,7 +26,11 @@ var cli = require("cli");
 cli.parse({
     "config-file": ['', 'Configuration file', "string"],
     config: ['', 'Configuration as JSON string', "string"],
-    code: ["c", "Code to evaluate", "string"]
+    code: ["c", "Code to evaluate", "string"],
+    port: ["p", "TCP port or UNIX socket file", "string"],
+    ssh: ["", "SSH host", "string"],
+    client: ["", "Connect to a jssh server", "bool"],
+    stdio: ["s", "Communicate through STDIO", "bool"]
 });
 cli.main(function (args, options) {
     //console.log(args, options);
@@ -99,10 +103,35 @@ cli.main(function (args, options) {
     var file = '';
     if (args.length > file_arg_pos)
         file = args[file_arg_pos];
+    // Start an SSH server.
+    if (options.ssh) {
+        if (!options.port)
+            throw Error('Port --port not specified.');
+        opts.ssh = options.ssh;
+        opts.port = options.port;
+        var SshServerApp = require("./app/SshServer");
+        var app = new SshServerApp(opts);
+        app.run();
+        return;
+    }
+    // Start --port server.
+    if (options.port) {
+        var SocketApp = require("./app/Socket");
+        var app = new SocketApp(opts);
+        app.run(options.port);
+        return;
+    }
     builder.Builder.buildShell(opts, function (err, shell) {
         if (err) {
             console.log("Error on startup.");
             console.log(err);
+            return;
+        }
+        // Start --headless server.
+        if (options.stdio) {
+            var HeadlessApp = require("./app/Headless");
+            var app = new HeadlessApp(shell);
+            app.run();
             return;
         }
         if (file) {

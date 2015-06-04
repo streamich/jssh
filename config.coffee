@@ -16,9 +16,11 @@ module.exports =
   grammar: 'default.peg'
 
   # Similar to `ENTRYPOINT` command in `Dockerfile`.
+  # TODO: Git bash (or some othe shell) comes with `/bin/sh` for Windows. So change this to work on Windows.
+  # TODO: Alternatively, use `cmd.exe`.
   entrypoint: if is_win then null else ['/bin/sh', '-c']
 
-  # Language in from which `code` commands will be compiled to JavaScript.
+  # Language in from which `code` commands will be compiled to JavaScript. You can set it to `coffee`.
   lang: 'js'
 
   # A list of packages whose methods to expose as global functions:
@@ -33,10 +35,11 @@ module.exports =
   # If package is missing, it is automatically downloaded from `npm`.
   api: [
     [null,    'jssh-api-jssh']
-#    [null,    'jssh-api-jssh-bin'] # If you want to compile.
-#    [null,    'jssh-api-jssh-native']
     ['util',  'jssh-api-util']
     ['conf',  'jssh-api-conf']
+#    [null,    'jssh-api-jssh-bin']     # If you want to compile. (Depends on packages that need to compile at install.)
+#    [null,    'shelljs']               # If you want to use a tested package.
+#    ['make',  'jssh-api-make']         # Create makefile utilities.
   ],
 
   # A list of [<namespace>, <package>] tuples of packages that will be 'required' as global variables:
@@ -44,6 +47,8 @@ module.exports =
   #   require(<package>) -> global[<namespace>]
   require: [
     ['_',     'lodash']
+#    ['async', 'async']
+#    ['hl',    'highland']
   ],
 
   # Whether to show verbose output.
@@ -57,3 +62,17 @@ module.exports =
 
   # Number of commands to save in history.
   history: 100 # Currently not supported :), `jssh` saves everyting.
+
+  # If not `null` will set current working directory to this value at startup.
+  pwd: null
+
+  ssh:
+    privateKey: 'server.key'
+    publicKey: 'client.pub'
+
+    # Map of usernames -> passwords, for users allowed to login. Set to `{}` if you want to disable logins by password.
+    users:
+      admin: 'admin'
+
+  # CLI parameters to provide to spawned child `jssh` processes when running a `--port` or `--ssh` servers.
+  childArgs: ['--config', {}]

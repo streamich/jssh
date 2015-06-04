@@ -6,7 +6,9 @@ var __extends = this.__extends || function (d, b) {
 };
 /// <reference path="typing.d.ts" />
 var events = require("events");
+var prompt = require("./reader/prompt");
 var LineBuffer = require("./LineBuffer");
+var History = require("./History");
 var Repl = (function (_super) {
     __extends(Repl, _super);
     function Repl(reader) {
@@ -19,6 +21,17 @@ var Repl = (function (_super) {
         reader.setRepl(this);
         reader.setLineBuffer(this.lineBuffer);
     }
+    Repl.build = function (sh, opts, terminal) {
+        if (opts === void 0) { opts = {}; }
+        if (terminal === void 0) { terminal = true; }
+        var myreader = new prompt.Prompt(opts.prompt || null);
+        myreader.init(sh.stdio.stdin, sh.stdio.stdout, terminal);
+        var myrepl = new Repl(myreader);
+        var myhistory = new History(opts.history);
+        myrepl.setShell(sh).setHistory(myhistory);
+        //.setConsole(sh.console);
+        return myrepl;
+    };
     Repl.prototype.setShell = function (shell) {
         this.shell = shell;
         return this;
@@ -30,9 +43,9 @@ var Repl = (function (_super) {
         });
         return this;
     };
-    Repl.prototype.setConsole = function (console) {
-        this.console = console;
-    };
+    //setConsole(console: Console) {
+    //    this.console = console;
+    //}
     Repl.prototype.read = function (command) {
         if (command)
             this.eval(command.replace(/^\s+|\s+$/g, '')); // .replace() == .trim()
@@ -43,17 +56,17 @@ var Repl = (function (_super) {
         var js = this.shell.eval(command, function (err, output, print) {
             if (print === void 0) { print = true; }
             if (print) {
-                this.console.logFormatted(output);
+                this.shell.console.logFormatted(output);
             }
             this.loop();
             this.emit("eval", command, js, output);
         }.bind(this));
     };
     Repl.prototype.print = function (output) {
-        this.console.log(output);
+        this.shell.console.log(output);
     };
     Repl.prototype.printError = function (output) {
-        this.console.error(output);
+        this.shell.console.error(output);
     };
     Repl.prototype.loop = function () {
         // Reprint the first line on multiline-command start, to see properly line numbers.
@@ -63,7 +76,7 @@ var Repl = (function (_super) {
                 "{{BUFFERED_LINES}}": 0,
                 "{{BUFFERED_LINES_+1}}": 1
             });
-            this.console.logSimple(multiline_prompt + this.lineBuffer.buffer[0] + this.lineBuffer.lastFoundSentinel);
+            this.shell.console.logSimple(multiline_prompt + this.lineBuffer.buffer[0] + this.lineBuffer.lastFoundSentinel);
         }
         this.reader.readLine();
         this.emit("loop");
@@ -89,7 +102,7 @@ var Repl = (function (_super) {
             command = command.replace("\n", sentinel + "\n");
             cmds.push(command);
         });
-        //this.console.log("Exporting history to '" + file + "'.");
+        //this.shell.console.log("Exporting history to '" + file + "'.");
         //fs.writeFile(file, cmds.join(""));
         return cmds;
     };

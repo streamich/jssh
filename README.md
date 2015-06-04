@@ -39,6 +39,10 @@ by default it uses functions [`jssh-api-jssh`](http://npmjs.com/package/jssh-api
 Note that `ls` returns the same results as `ls()`, that is because `jssh` executes automatically a functions if that is part
 of the *API*, see below on API.
 
+Get the first file in current directory:
+
+    ls()[0]
+
 To execute shell commands start with `>` symbol. This way your commands will be 'proxied' to the native system shell
 defined by the `entrypoint` property in the configuration file.
 
@@ -148,6 +152,14 @@ Edit your file in `slap`, press <kbd>Ctrl</kbd> + <kbd>S</kbd>, <kbd>ENTER</kbd>
 Instead of:
 
     > node script.js
+    
+You can use *jssh* remotely, start a server on port `1234`:
+
+    jssh --port 1234
+    
+Now, open another terminal and connect to it with *telnet*:
+
+    telnet localhost 1234
 
 ## CLI Options
 
@@ -160,10 +172,16 @@ Instead of:
           --config-file STRINGConfiguration file
           --config STRING    Configuration as JSON string
       -c, --code STRING      Code to evaluate
+      -p, --port STRING      TCP port or UNIX socket file
+      -s, --stdio            Communicate through STDIO
       -h, --help             Display help and usage details
 
-- `--config-file` and `--config` overwrite the default config, see [Configuration](#Configuration).
-- `--code` executes code, like `jssh --code 'console.log(123)'`.
+ - `--config-file` and `--config` overwrite the default config, see [Configuration](#Configuration).
+ - `--code` executes code, like `jssh --code 'console.log(123)'`.
+ - `--port`, `-p` tells *jssh* to listen to a port or a UNIX socket instead of STDIN for commands. When running with 
+ this option, *jssh* will spawn a new shell for every new connection and redirect its IO to that socket. 
+ - `--stdio`, `-s` tells *jssh* to start in a *headless* mode, i.e. it will not have a prompt and will
+ listen for commands on STDIN and reply back through STDOUT, STDERR.
 
 ## Configuration
 
@@ -247,6 +265,8 @@ An array of command and arguments to use to proxy shell commands like `> ifconfi
 
 The default is `['/bin/sh', '-c']`. If set to `null`, *jssh* will try to execute your commands with Node's
 `child_process.spawn` method directly.
+
+### `config.api: tuples[]`
 
 ## Snippets
 
