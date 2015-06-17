@@ -79,7 +79,7 @@ Get the first file in current directory:
 
     ls()[0]
 
-To execute shell commands start with `>` symbol. This way your commands will be 'proxied' to the native system shell
+To execute native shell commands start with `>` symbol. This way your commands will be 'proxied' to the native system shell
 defined by the `entrypoint` property in the configuration file.
 
     > ls
