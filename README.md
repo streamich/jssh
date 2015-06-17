@@ -5,11 +5,6 @@ A shell in *JavaScript*, use *JavaScript* instead of BASH for your shell and scr
 **This project is under development in very early alpha. Use at your own risk. Many parts of this project will change
 in the future.**
 
-//
-
-
-    https.get('http://raw.githubusercontent.com/streamich/jssh/master/portable/jssh.js', function(res) { var data = ''; res.on('data', function(chunk) { data += chunk.toString(); }); res.on('end', function() { fs.writeFileSync('./jssh.js', data); }); });
-
 ## Installation
 
 Install as a global `npm` package.
@@ -20,7 +15,21 @@ Or,
 
     sudo npm install -g jssh
     
-Or use a *portable* version: `./portable/jssh.js`. This file is a bundle of everything `jssh` needs to run. 
+Or use a *portable* version: `./portable/jssh.js`. This file is a bundle of everything `jssh` needs to run.
+ 
+## Use with Node OS
+
+An simple way how to install `jssh` on [Node OS](https://node-os.com/):
+
+    mkdir /usr/test
+    cd /usr/test
+    node
+    
+    var fs = require('fs');
+    var https = require('https');
+    https.get('https://raw.githubusercontent.com/streamich/jssh/master/portable/jssh-big.js', function(res) { var data = ''; res.on('data', function(chunk) { data += chunk.toString(); }); res.on('end', function() { fs.writeFileSync('./jssh.js', data); }); });
+  
+  
   
 ## Usage
 

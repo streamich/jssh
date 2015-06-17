@@ -9,12 +9,19 @@
       }
     },
     bundle: {
-      jssh: {
+      'jssh-big': {
         target: 'node',
         volumes: [['/jssh', 'files']],
         props: {
           main: '/jssh/index.js',
           compress: false
+        }
+      },
+      jssh: {
+        target: 'node',
+        volumes: [['/jssh', 'files']],
+        props: {
+          main: '/jssh/index.js'
         }
       }
     }
