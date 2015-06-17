@@ -19,7 +19,14 @@ Or use a *portable* version: `./portable/jssh.js`. This file is a bundle of ever
  
 ## Use with Node OS
 
-An simple way how to install `jssh` on [Node OS](https://node-os.com/):
+Here is a simple way to install `jssh` on [Node OS](https://node-os.com/). This is just for testing purposes, 
+if you want to try `jssh` with Node OS.
+
+Start *Node OS*:
+
+    sudo docker run -it nodeos/nodeos
+    
+Download *jssh*:
 
     mkdir /usr/test
     cd /usr/test
@@ -28,8 +35,21 @@ An simple way how to install `jssh` on [Node OS](https://node-os.com/):
     var fs = require('fs');
     var https = require('https');
     https.get('https://raw.githubusercontent.com/streamich/jssh/master/portable/jssh-big.js', function(res) { var data = ''; res.on('data', function(chunk) { data += chunk.toString(); }); res.on('end', function() { fs.writeFileSync('./jssh.js', data); }); });
+    fs.readdirSync('./');
   
-  
+Press <kbd>Ctrl</kbd> + <kbd>C</kbd> to exit Node.js REPL and run `jssh`:
+
+    node jssh.js
+    
+In Node.js v0.10 there are bugs in `readline` module, so you might want to opt for a colorless prompt:
+
+    node jssh.js --config '{"prompt": " {{CWD}} > "}'
+    
+Now try:
+
+    "hello".to('world.txt')
+    ls
+    cat('world.txt')
   
 ## Usage
 
