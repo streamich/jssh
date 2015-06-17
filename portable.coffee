@@ -23,3 +23,4 @@ module.exports =
       ]
       props:
         main: '/jssh/index.js'
+        compress: false

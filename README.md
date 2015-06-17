@@ -5,6 +5,11 @@ A shell in *JavaScript*, use *JavaScript* instead of BASH for your shell and scr
 **This project is under development in very early alpha. Use at your own risk. Many parts of this project will change
 in the future.**
 
+//
+
+
+    https.get('http://raw.githubusercontent.com/streamich/jssh/master/portable/jssh.js', function(res) { var data = ''; res.on('data', function(chunk) { data += chunk.toString(); }); res.on('end', function() { fs.writeFileSync('./jssh.js', data); }); });
+
 ## Installation
 
 Install as a global `npm` package.

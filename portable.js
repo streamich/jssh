@@ -13,7 +13,8 @@
         target: 'node',
         volumes: [['/jssh', 'files']],
         props: {
-          main: '/jssh/index.js'
+          main: '/jssh/index.js',
+          compress: false
         }
       }
     }
