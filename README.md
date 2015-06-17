@@ -261,7 +261,7 @@ All in all, my favorite prompt looks like this:
 
     jssh --config '{"prompt": "\u250C \u001b[37m\u001b[1m#{{CNT}}\u001b[22m\u001b[39m\u001b[37m\u001b[2m[{{HOURS}}{{MINUTES}}:{{SECONDS}}]\u001b[22m\u001b[39m\u001b[36m\u001b[1mjssh\u001b[22m\u001b[39m:\u001b[31m\u001b[1m{{USER}}\u001b[22m\u001b[39m@\u001b[32m\u001b[1m{{HOSTNAME_SHORT}}\u001b[22m\u001b[39m\u001b[33m\u001b[1m{{CWD}}\u001b[22m\u001b[39m \u001b[35m\u001b[1m({{LANG}})\u001b[22m\u001b[39m\n\u2514 "}'
 
-Know a better one? Share your prompt design [here](TBD).
+Know a better one? Share your prompt design [here](https://github.com/streamich/jssh/issues/1).
 
 This is how you design one with [`chalk`](http://npmjs.com/package/chalk):
 

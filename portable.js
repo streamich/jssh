@@ -5,7 +5,8 @@
     layer: {
       files: {
         src: './',
-        glob: ['key/client.pub', 'key/server.key', 'grammar/*.peg', '*.+(js|json|md)', 'src/**/*.+(js|json)', 'node_modules/**/*.+(js|json)']
+        glob: ['key/client.pub', 'key/server.key', 'grammar/*.peg', '*.+(js|json|md)', 'src/**/*.+(js|json)', 'node_modules/**/*.+(js|json)'],
+        transform: ['.*\.js$', 'uglify']
       }
     },
     bundle: {

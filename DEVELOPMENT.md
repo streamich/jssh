@@ -14,6 +14,10 @@ Install `npm` dependencies.
     
     mocha test
     
+Building a portable bundle in `./portable/jssh.js`:
+
+    portable.js bundle
+    
     
     
     

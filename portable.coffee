@@ -13,7 +13,7 @@ module.exports =
         'src/**/*.+(js|json)'
         'node_modules/**/*.+(js|json)'
       ]
-#      transform: ['.*\.js$', 'uglify']
+      transform: ['.*\.js$', 'uglify']
 
   bundle:
     'jssh-big':
