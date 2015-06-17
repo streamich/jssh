@@ -1,6 +1,6 @@
 {
   "name": "jssh",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Wrapper around `shelljs` to use it in CLI mode.",
   "main": "index.js",
   "preferGlobal": true,

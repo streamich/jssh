@@ -15,7 +15,7 @@ Or,
 
     sudo npm install -g jssh
     
-Or use a *portable* version: `./portable/jssh.js`. This file is a bundle of everything `jssh` needs to run.
+Or use a *portable* version: `./portable/jssh.js`. This file is a single `.js` bundle with everything `jssh` needs to run.
  
 ## Use with Node OS
 
@@ -99,7 +99,7 @@ shell. To execute your command interactively use `$` symbol like so: `$>`, `//$>
     $> "p" + "w" + "d"
     
     var is_windows = !!process.env.WINDIR;
-    $> is_windows ? "ipconfig" : "ifconfig";
+    $> (is_windows ? "ip" : "if") + "config";
     
 Or simply use a predefined *JavaScript* function `$` provided by the `jssh-api-jssh` API (see below on APIs).
 
