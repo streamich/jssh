@@ -528,6 +528,13 @@ Instead of (in *JavaScript* and *CoffeScript*):
 Could borrow some ideas from [`nshell`](https://github.com/tj/nshell), like [events](https://github.com/tj/nshell#events)
 and [sourcing `.js` files](https://github.com/tj/nshell#built-ins) with a dot `.`.
 
+## Other Known `.js` shells
+
+ - [`nshell`](https://github.com/tj/nshell)
+ - [`nsh`](https://github.com/groundwater/node-bin-nsh)
+ - [`shelljs`](https://github.com/arturadib/shelljs)
+ 
+
 ## Other
 
 Tested on Ubuntu 14.04 with Node.js 0.12.4.
