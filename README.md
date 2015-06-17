@@ -524,6 +524,9 @@ Instead of (in *JavaScript* and *CoffeScript*):
     
     jssh > ls("~")
     jssh > ls '~'
+    
+Could borrow some ideas from [`nshell`](https://github.com/tj/nshell), like [events](https://github.com/tj/nshell#events)
+and [sourcing `.js` files](https://github.com/tj/nshell#built-ins) with a dot `.`.
 
 ## Other
 
