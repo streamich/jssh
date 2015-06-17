@@ -99,6 +99,7 @@ export class Builder {
             });
 
             myshell
+                .init()
                 .setOptions(shell_opts)
                 .setLanguage(language)
                 .setParser(parser)

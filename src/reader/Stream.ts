@@ -1,6 +1,5 @@
 import Reader = require("./Reader");
 import stream = require("stream");
-var lazy = require("lazy");
 
 
 export = ReaderStream; class ReaderStream {

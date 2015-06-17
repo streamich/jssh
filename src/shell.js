@@ -6,6 +6,7 @@ var __extends = this.__extends || function (d, b) {
 };
 /// <reference path="./typing.d.ts" />
 var events = require("events");
+var host = require('./host/host');
 var Shell = (function (_super) {
     __extends(Shell, _super);
     function Shell() {
@@ -17,12 +18,18 @@ var Shell = (function (_super) {
         };
         // Used in `ActionExec`, experimental.
         this.shareStdio = true;
+        this.hosts = new host.Collection;
         /**
          * Actions that this shell is able to execute.
          * @type {{}}
          */
         this.actions = {};
     }
+    Shell.prototype.init = function () {
+        var localhost = new host.HostLocalhost;
+        this.hosts.add(localhost, true);
+        return this;
+    };
     Shell.prototype.setOptions = function (opts) {
         this.opts = opts;
         return this;
@@ -62,7 +69,7 @@ var Shell = (function (_super) {
     };
     Shell.prototype.executeAction = function (name, payload, cb) {
         try {
-            var action = this.createAction(name, payload);
+            var myaction = this.createAction(name, payload);
         }
         catch (e) {
             if (e.message == "action_not_registered") {
@@ -74,34 +81,12 @@ var Shell = (function (_super) {
             else
                 throw e;
         }
-        try {
-            var out = action.run(function (err, res) {
-                action.error = err;
-                action.result = res;
-                cb(err, res, action.printOutput);
-                // Emit "action" after `cb`, so that `history.last()` refers the previous action during this call.
-                this.emit("action", action);
-                this.emit("action:" + name, action);
-            }.bind(this));
-            action.out = out;
-            //this.console.log(out);
-            return out;
-        }
-        catch (e) {
-            this.console.error(e);
-            action.error = e;
-            if (e.message == "invalid") {
-                // TODO: if code is invalid, execute `exec` action.
-                // If something went wrong, maybe it is not JS, try to execute in system shell.
-                // TODO: We should have an 'entry point` variable, such as '/bin/sh' or '/bin/bash' that we use to execute commands.
-                cb();
-                return null;
-            }
-            process.nextTick(function () {
-                cb(e);
-            });
-            return null;
-        }
+        this.hosts.getActive().runAction(myaction, function (err, res) {
+            cb(err, res, myaction.printOutput);
+            // Emit "action" after `cb`, so that `history.last()` refers the previous action during this call.
+            this.emit("action", myaction);
+            this.emit("action:" + name, myaction);
+        }.bind(this));
     };
     /**
      * @param command

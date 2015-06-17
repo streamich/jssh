@@ -4,3 +4,5 @@ tsd.json
 node_modules/
 .modules/
 .idea/
+portable.coffee
+portable.js

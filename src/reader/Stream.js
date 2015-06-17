@@ -1,4 +1,3 @@
-var lazy = require("lazy");
 var ReaderStream = (function () {
     function ReaderStream() {
         this.buffer = [];

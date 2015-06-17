@@ -28,6 +28,11 @@ var Context = (function () {
             var js = Context.exportTemplate.replace("{{PACKAGE}}", api.pkg).replace("{{NAMESPACE}}", api.namespace ? api.namespace : "");
             self.run(js);
         });
+        // TODO:...
+        //var js = Context.exportTemplate
+        //    .replace("{{PACKAGE}}", '../superprompt')
+        //    .replace("{{NAMESPACE}}", "");
+        //this.run(js);
     };
     Context.prototype.requirePackage = function (namespace, name) {
         var js = Context.exportTemplate.replace("{{PACKAGE}}", name).replace("{{NAMESPACE}}", namespace);

@@ -1,5 +1,7 @@
 /// <reference path="typing.d.ts" />
 
+require("jssh-lang-js")
+//require("jssh-lang-coffee")
 
 // Wrapper around .js or one of JavaScripts dialets (.coffee, etc..).
 export = Language; class Language {
@@ -7,13 +9,13 @@ export = Language; class Language {
     static loadLang(lang, cb) {
         var pkg = "jssh-lang-" + lang;
         try {
-            cb(null, require(pkg));
+            cb(null, require("jssh-lang-" + lang));
         } catch(e) {
             if(e.code == "MODULE_NOT_FOUND") {
                 require("./Npm").install(pkg, (err, data) => {
                     if(err) return cb(err);
                     try {
-                        cb(null, require(pkg));
+                        cb(null, require("jssh-lang-" + lang));
                     } catch(e) {
                         cb(e);
                     }

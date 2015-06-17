@@ -1,8 +1,11 @@
 /// <reference path="typing.d.ts" />
+
+//global._require = _require = global.require;
+import fs = require('fs');
 import builder = require("./builder");
 import prompt = require("./reader/prompt");
-import fs = require('fs');
 var config = require('../config');
+
 
 // This code splits arguments that are strings like ['--config {}'] into two arguments, like ['--config', '{}']
 // This is used when we receive arguments from #! scripts as one string.
@@ -23,7 +26,7 @@ if(process.argv.length > 2) {
     process.argv = new_argv;
 }
 
-var cli = require("cli");
+var cli = require('cli');
 
 
 cli.parse({

@@ -71,6 +71,13 @@ export class Context implements IContext {
                 .replace("{{NAMESPACE}}", api.namespace ? api.namespace : "");
             self.run(js);
         });
+
+
+        // TODO:...
+        //var js = Context.exportTemplate
+        //    .replace("{{PACKAGE}}", '../superprompt')
+        //    .replace("{{NAMESPACE}}", "");
+        //this.run(js);
     }
 
     requirePackage(namespace, name) {

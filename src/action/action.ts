@@ -39,4 +39,14 @@ export class Action {
 
     }
 
+    setResult(result: any) {
+        this.result = result;
+        return this;
+    }
+
+    setError(error: any) {
+        this.error = error;
+        return this;
+    }
+
 }

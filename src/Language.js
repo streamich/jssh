@@ -1,4 +1,5 @@
 /// <reference path="typing.d.ts" />
+require("jssh-lang-js");
 var Language = (function () {
     function Language() {
         this.name = "js";
@@ -7,7 +8,7 @@ var Language = (function () {
     Language.loadLang = function (lang, cb) {
         var pkg = "jssh-lang-" + lang;
         try {
-            cb(null, require(pkg));
+            cb(null, require("jssh-lang-" + lang));
         }
         catch (e) {
             if (e.code == "MODULE_NOT_FOUND") {
@@ -15,7 +16,7 @@ var Language = (function () {
                     if (err)
                         return cb(err);
                     try {
-                        cb(null, require(pkg));
+                        cb(null, require("jssh-lang-" + lang));
                     }
                     catch (e) {
                         cb(e);

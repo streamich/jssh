@@ -69,7 +69,7 @@ var Builder = (function () {
             opts.require.forEach(function (pkg) {
                 mycontext.requirePackage(pkg.namespace, pkg.name);
             });
-            myshell.setOptions(shell_opts).setLanguage(language).setParser(parser).setLib(mylib).bindConsole(myconsole).setContext(mycontext).registerActionClass("code", ActionCode).registerActionClass("exec", ActionExec).registerActionClass("exec_code", ActionExecCode).registerActionClass("stream", ActionStream).registerActionClass("respawn", ActionRespawn);
+            myshell.init().setOptions(shell_opts).setLanguage(language).setParser(parser).setLib(mylib).bindConsole(myconsole).setContext(mycontext).registerActionClass("code", ActionCode).registerActionClass("exec", ActionExec).registerActionClass("exec_code", ActionExecCode).registerActionClass("stream", ActionStream).registerActionClass("respawn", ActionRespawn);
             callback(null, myshell);
         });
     };

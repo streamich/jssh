@@ -23,6 +23,14 @@ var Action = (function () {
     };
     Action.prototype.run = function (cb) {
     };
+    Action.prototype.setResult = function (result) {
+        this.result = result;
+        return this;
+    };
+    Action.prototype.setError = function (error) {
+        this.error = error;
+        return this;
+    };
     return Action;
 })();
 exports.Action = Action;

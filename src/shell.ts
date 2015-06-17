@@ -9,6 +9,7 @@ import context = require("./context/context");
 import Console = require("./Console");
 import History = require("./History");
 import Repl = require("./Repl");
+import host = require('./host/host');
 
 
 export interface IShellOptions {
@@ -49,6 +50,8 @@ export class Shell extends events.EventEmitter {
 
     console: Console;
 
+    hosts: host.Collection = new host.Collection;
+
     /**
      * Actions that this shell is able to execute.
      * @type {{}}
@@ -56,6 +59,12 @@ export class Shell extends events.EventEmitter {
     actions: any = {};
 
     repl: Repl;
+
+    init() {
+        var localhost = new host.HostLocalhost;
+        this.hosts.add(localhost, true);
+        return this;
+    }
 
     setOptions(opts: IShellOptions) {
         this.opts = opts;
@@ -107,7 +116,7 @@ export class Shell extends events.EventEmitter {
 
     executeAction(name, payload, cb) {
         try {
-            var action = this.createAction(name, payload);
+            var myaction = this.createAction(name, payload);
         } catch(e) {
             if(e.message == "action_not_registered") {
                 this.console.error("Action '" + name + "' not registered.");
@@ -117,36 +126,13 @@ export class Shell extends events.EventEmitter {
             } else throw e;
         }
 
-        try {
+        this.hosts.getActive().runAction(myaction, function(err, res) {
+            cb(err, res, myaction.printOutput);
 
-            var out = action.run(function (err, res) {
-                action.error = err;
-                action.result = res;
-                cb(err, res, action.printOutput);
-
-                // Emit "action" after `cb`, so that `history.last()` refers the previous action during this call.
-                this.emit("action", action);
-                this.emit("action:" + name, action);
-            }.bind(this));
-            action.out = out;
-
-            //this.console.log(out);
-            return out;
-        } catch(e) {
-            this.console.error(e);
-            action.error = e;
-
-            if(e.message == "invalid") {
-                // TODO: if code is invalid, execute `exec` action.
-                // If something went wrong, maybe it is not JS, try to execute in system shell.
-                // TODO: We should have an 'entry point` variable, such as '/bin/sh' or '/bin/bash' that we use to execute commands.
-                cb();
-                return null;
-            }
-
-            process.nextTick(() => { cb(e); });
-            return null;
-        }
+            // Emit "action" after `cb`, so that `history.last()` refers the previous action during this call.
+            this.emit("action", myaction);
+            this.emit("action:" + name, myaction);
+        }.bind(this));
     }
 
     /**
