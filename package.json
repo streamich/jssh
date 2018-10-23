@@ -8,29 +8,34 @@
     "jssh": "bin/jssh"
   },
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/streamich/jssh.git"
+    "type": "git",
+    "url": "https://github.com/streamich/jssh.git"
   },
   "dependencies": {
-    "cli":                        "0.7.0",
-    "chalk":                      "1.0.0",
-    "async":                      "1.0.0",
-    "pegjs":                      "0.8.0",
-    "lodash":                     "3.9.3",
-    "highland":                   "2.5.1",
-    "ascii-table":                "0.0.8",
-    "columnify":                  "1.5.1",
-    "ssh2":                       "0.4.8",
-    "keypair":                    "1.0.0",
+    "cli": "0.7.0",
+    "chalk": "1.0.0",
+    "async": "1.0.0",
+    "pegjs": "0.8.0",
+    "lodash": "3.9.3",
+    "highland": "2.5.1",
+    "ascii-table": "0.0.8",
+    "columnify": "1.5.1",
+    "ssh2": "0.4.8",
+    "keypair": "1.0.0",
     "buffer-equal-constant-time": "1.0.1",
-
-    "jssh-api-jssh":              "*",
-    "jssh-api-util":              "*",
-    "jssh-api-conf":              "*",
-    "jssh-lang-js":               "*",
-    "jssh-lang-coffee":           "*"
+    "jssh-api-jssh": "*",
+    "jssh-api-util": "*",
+    "jssh-api-conf": "*",
+    "jssh-lang-js": "*",
+    "jssh-lang-coffee": "*",
+    "snyk": "^1.104.2"
   },
   "devDependencies": {
-    "chai":                       "*"
-  }
+    "chai": "*"
+  },
+  "scripts": {
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
+  },
+  "snyk": true
 }
