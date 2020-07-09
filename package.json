@@ -16,7 +16,7 @@
     "chalk":                      "1.0.0",
     "async":                      "1.0.0",
     "pegjs":                      "0.8.0",
-    "lodash":                     "3.9.3",
+    "lodash":                     "4.17.16",
     "highland":                   "2.5.1",
     "ascii-table":                "0.0.8",
     "columnify":                  "1.5.1",
