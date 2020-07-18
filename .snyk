@@ -1,0 +1,11 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.16.0
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:marked:20150520':
+    - jssh-api-jssh > marked:
+        patched: '2020-07-18T21:20:06.565Z'
+  'npm:minimatch:20160620':
+    - jssh-api-jssh > glob > minimatch:
+        patched: '2020-07-18T21:20:06.565Z'
