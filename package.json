@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "cli":                        "0.7.0",
-    "chalk":                      "1.0.0",
+    "chalk":                      "1.1.2",
     "async":                      "1.0.0",
     "pegjs":                      "0.8.0",
     "lodash":                     "3.9.3",
