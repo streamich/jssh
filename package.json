@@ -20,7 +20,7 @@
     "highland":                   "2.5.1",
     "ascii-table":                "0.0.8",
     "columnify":                  "1.5.1",
-    "ssh2":                       "0.4.8",
+    "ssh2":                       "1.0.0",
     "keypair":                    "1.0.0",
     "buffer-equal-constant-time": "1.0.1",
 
