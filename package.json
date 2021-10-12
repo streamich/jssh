@@ -21,7 +21,7 @@
     "ascii-table":                "0.0.8",
     "columnify":                  "1.5.1",
     "ssh2":                       "0.4.8",
-    "keypair":                    "1.0.0",
+    "keypair":                    "1.0.4",
     "buffer-equal-constant-time": "1.0.1",
 
     "jssh-api-jssh":              "*",
