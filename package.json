@@ -14,7 +14,7 @@
   "dependencies": {
     "cli":                        "0.7.0",
     "chalk":                      "1.0.0",
-    "async":                      "1.0.0",
+    "async":                      "3.2.2",
     "pegjs":                      "0.8.0",
     "lodash":                     "3.9.3",
     "highland":                   "2.5.1",
